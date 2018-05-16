@@ -46,35 +46,35 @@ const REMOVE_GOAL = 'REMOVE_GOAL'
 function addTodoAction(todo){
   return {
     type: ADD_TODO,
-    todo
+    todo,
   }
 }
 
 function removeTodoAction(id){
   return {
     type: REMOVE_TODO,
-    id
+    id,
   }
 }
 
 function toggleTodoAction(id){
   return {
     type: TOGGLE_TODO,
-    id
+    id,
   }
 }
 
 function addGoalAction(goal){
   return {
     type: ADD_GOAL,
-    goal
+    goal,
   }
 }
 
 function removeGoalAction(id){
   return {
     type: REMOVE_GOAL,
-    id
+    id,
   }
 }
 
@@ -82,10 +82,10 @@ function removeGoalAction(id){
 function todos(state = [], action){
   switch (action.type) {
     case ADD_TODO:
-      return state.concat([action.todo]);
+      return [...state, action.todo]
 
     case REMOVE_TODO:
-      return state.filter(item => item.id !== action.id);
+      return state.filter(item => item.id !== action.id)
 
     case TOGGLE_TODO:
       return state.map(item => (item.id !== action.id ? item : Object.assign(
@@ -102,7 +102,7 @@ function todos(state = [], action){
 function goals(state = [], action){
   switch (action.type) {
     case ADD_GOAL:
-      return state.concat([action.goal]);
+      return [...state, action.goal]
 
     case REMOVE_GOAL:
       return state.filter(item => item.id !== action.id);

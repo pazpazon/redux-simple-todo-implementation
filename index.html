@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Todos/Goals</title>
+</head>
+<body>
+  <div class="container">
+    <div class="item-list">
+      <h1>Todos</h1>
+      <input id="todo" type="text" placeholder="Add todo">
+      <button id="todoBtn">Add</button>
+      <ul id="todos">
+
+      </ul>
+    </div>
+    <div class="item-list">
+      <h1>Goals</h1>
+      <input id="goal" type="text" placeholder="Add goal">
+      <button id="goalBtn">Add</button>
+      <ul id="goals">
+      
+      </ul>
+    </div>
+  </div>
+  <script src="index.js"></script>
+  <script type="text/javascript">
+
+    function generateID(){
+      return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)
+    }
+    
+    function addTodo(){
+      const input = document.getElementById('todo')
+      const name = input.value
+      input.value = ''
+      
+      if ( !name.trim() ) return
+      store.dispatch(addTodoAction({
+        id: generateID(),
+        name,
+        complete: false,
+      }))
+    }
+
+    function addGoal(){
+      const input = document.getElementById('goal')
+      const name = input.value
+      input.value = ''
+
+      if (!name.trim()) return
+      store.dispatch(addGoalAction({
+        id: generateID(),
+        name,
+      }))
+    }
+
+    document.getElementById('todoBtn').addEventListener('click', addTodo)
+    document.getElementById('goalBtn').addEventListener('click', addGoal)
+
+    const store = createStore(App)
+    const unsubscribe = store.subscribe(() => {
+      
+      console.log(store.getState())
+
+      document.getElementById('goals').innerHTML = ''
+      document.getElementById('todos').innerHTML = ''
+
+      const {goals, todos} = store.getState();
+      goals.forEach(addGoalToDOM)
+      todos.forEach(addTodoToDOM)
+    })
+
+    function createRemoveButton(onClick){
+      const removeBtn = document.createElement('button')
+      removeBtn.innerHTML = 'X'
+      removeBtn.onmouseover = () => removeBtn.style.cursor = 'pointer'
+      removeBtn.addEventListener('click', onClick)
+      return removeBtn
+    }
+
+    function addTodoToDOM(todo) {
+      const node = document.createElement('li')
+      const text = document.createTextNode(todo.name)
+      const removeBtn = createRemoveButton((e) => {
+        store.dispatch(removeTodoAction(todo.id))
+      })
+
+      node.appendChild(removeBtn)
+      node.appendChild(text)
+      node.style.textDecoration = todo.complete ? 'line-through' : 'none'
+      node.onmouseover = () => node.style.cursor = 'pointer'
+      node.addEventListener('click', () => {
+        store.dispatch(toggleTodoAction(todo.id))
+      })
+      document.getElementById('todos').appendChild(node)
+    }
+
+    function addGoalToDOM(goal) {
+      const node = document.createElement('li')
+      const text = document.createTextNode(goal.name)
+      const removeBtn = createRemoveButton((e) => {
+        store.dispatch(removeGoalAction(goal.id))
+      })
+
+      node.appendChild(removeBtn)
+      node.appendChild(text)
+      document.getElementById('goals').appendChild(node)
+    }
+    
+  </script>
+</body>
+</html>
